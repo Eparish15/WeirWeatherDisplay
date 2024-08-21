@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast and Radar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to bottom, #005093, #002244);
+            color: white;
+        }
+
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: url('your-dynamic-background-url.jpg') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(8px);
+            opacity: 0.7;
+        }
+
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 51, 102, 0.8);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            z-index: 10;
+            padding: 0 20px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #logo {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.7));
+        }
+
+        #time-date {
+            font-size: 26px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        #current-weather {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            width: 35%;
+            padding: 15px;
+            box-sizing: border-box;
+            background: rgba(0, 51, 102, 0.85);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px 0 0 10px;
+            box-shadow: -4px 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #current-icon {
+            font-size: 64px;
+            margin-right: 20px;
+            color: #f39c12;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        #current-temp {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0;
+            color: #f39c12;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        #current-condition {
+            font-size: 28px;
+            margin: 10px 0;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        #radar {
+            position: absolute;
+            top: 70px;
+            left: 0;
+            width: 65%;
+            height: calc(100% - 140px);
+            background: #ffffff;
+            border-right: 2px solid #003366;
+            border-radius: 0 10px 10px 0;
+            overflow: hidden;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #radar-iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        #weather-forecast {
+            position: absolute;
+            top: calc(210px); /* Adjusted top position */
+            right: 0;
+			width: 35%;
+            height: calc(100% - 215px); /* Adjusted height */
+            background-color: rgba(0, 51, 102, 0.85);
+            padding: 5px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 2px;
+            box-sizing: border-box;
+            border-radius: 5px 0 0 5px;
+            box-shadow: -4px 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .forecast-day {
+            text-align: center;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .forecast-day:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .forecast-day h3 {
+            font-size: 14px;
+            margin: 5px 0;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .forecast-day p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        .weather-icon {
+            font-size: 32px;
+            color: #f39c12;
+            margin: 5px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .forecast-day:hover .weather-icon {
+            transform: scale(1.1);
+        }
+
+        #rss-feed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 65%;
+            background-color: rgba(0, 51, 102, 0.8);
+            color: yellow;
+            font-size: 28px;
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+            line-height: 1.2;
+            text-align: center;
+            z-index: 3;
+            padding: 10px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #rss-feed-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: scroll-left 60s linear infinite;
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body>
+    <div id="background"></div>
+    
+    <div id="header">
+        <img id="logo" src="https://oregonbusinessindustry.com/wp-content/uploads/weir_esco_logo_vert_RGB_lrg-300x179.png" alt="ESCO WEIR Logo">
+        <div id="time-date">Loading time...</div>
+    </div>
+
+    <div id="current-weather">
+        <i id="current-icon" class="fas fa-cloud"></i> <!-- Placeholder for the weather icon -->
+        <div>
+            <h1 id="current-temp">--°F</h1>
+            <h2 id="current-condition">Loading...</h2>
+        </div>
+    </div>
+
+    <div id="radar">
+        <iframe id="radar-iframe"
+            src="https://embed.windy.com/embed2.html?lat=32.3198&lon=-89.1656&zoom=4&overlay=radar&play=true" 
+            frameborder="0">
+        </iframe>
+    </div>
+
+    <div id="weather-forecast">
+        <!-- Forecast data will be dynamically injected here -->
+    </div>
+
+    <div id="rss-feed">
+        <div id="rss-feed-content">
+            <!-- Alerts will be dynamically injected here -->
+        </div>
+    </div>
+
+    <script>
+        const apiKey = 'da971ffb89fc4008b533c8e8ce3181e8';
+        const lat = 32.3198;
+        const lon = -89.1656;
+        let cycleCount = 0;
+
+        function getWeatherIcon(code) {
+            const iconMap = {
+                200: 'fas fa-bolt',
+                300: 'fas fa-cloud-rain',
+                500: 'fas fa-cloud-showers-heavy',
+                600: 'fas fa-snowflake',
+                800: 'fas fa-sun',
+                801: 'fas fa-cloud-sun',
+                802: 'fas fa-cloud',
+                803: 'fas fa-cloud',
+                804: 'fas fa-cloud',
+            };
+            return iconMap[code] || 'fas fa-cloud';
+        }
+
+        function convertToMPH(mps) {
+            return (mps * 2.23694).toFixed(1);
+        }
+
+        function updateWeather() {
+            fetch(`https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${apiKey}&units=I`)
+                .then(response => response.json())
+                .then(data => {
+                    const current = data.data[0];
+                    document.getElementById('current-temp').textContent = `${current.temp}°F`;
+                    document.getElementById('current-condition').textContent = current.weather.description;
+                    document.getElementById('current-icon').className = `fas ${getWeatherIcon(current.weather.code)}`;
+
+                    const forecastElement = document.getElementById('weather-forecast');
+                    forecastElement.innerHTML = '';
+
+                    data.data.slice(1, 7).forEach(day => {
+                        const weatherCode = day.weather.code;
+                        const forecastDay = document.createElement('div');
+                        forecastDay.classList.add('forecast-day');
+                        forecastDay.innerHTML = `
+                            <h3>${new Date(day.datetime).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</h3>
+                            <i class="${getWeatherIcon(weatherCode)} weather-icon"></i>
+                            <p>${day.max_temp}°F / ${day.min_temp}°F</p>
+                            <p>Precip: ${day.pop}%</p>
+                            <p>Humidity: ${day.rh}%</p>
+                            <p>Wind: ${windDirection(day.wind_dir)} ${convertToMPH(day.wind_spd)} MPH</p>
+                        `;
+                        forecastElement.appendChild(forecastDay);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    document.getElementById('weather-forecast').innerHTML = '<p style="text-align: center;">Unable to load weather data.</p>';
+                });
+        }
+
+        function windDirection(degree) {
+            if (degree >= 0 && degree <= 22.5) return 'N';
+            if (degree > 22.5 && degree <= 67.5) return 'NE';
+            if (degree > 67.5 && degree <= 112.5) return 'E';
+            if (degree > 112.5 && degree <= 157.5) return 'SE';
+            if (degree > 157.5 && degree <= 202.5) return 'S';
+            if (degree > 202.5 && degree <= 247.5) return 'SW';
+            if (degree > 247.5 && degree <= 292.5) return 'W';
+            if (degree > 292.5 && degree <= 337.5) return 'NW';
+            return 'N';
+        }
+
+        function updateTimeDate() {
+            const timeDateElement = document.getElementById('time-date');
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            timeDateElement.textContent = now.toLocaleDateString(undefined, options);
+        }
+
+        function updateAlerts() {
+            fetch(`https://api.weather.gov/alerts/active?point=32.3198,-89.1656`)
+                .then(response => response.json())
+                .then(data => {
+                    const alertsElement = document.getElementById('rss-feed-content');
+                    alertsElement.innerHTML = '';
+
+                    if (data.features.length > 0) {
+                        data.features.forEach(alert => {
+                            const alertDiv = document.createElement('div');
+                            alertDiv.innerHTML = `
+                                <strong>${alert.properties.headline}</strong> - ${alert.properties.description}
+                            `;
+                            alertsElement.appendChild(alertDiv);
+                        });
+                    } else {
+                        alertsElement.innerHTML = 'No active alerts.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching alerts data:', error);
+                    document.getElementById('rss-feed-content').innerHTML = '<p style="text-align: center;">Unable to load alerts data.</p>';
+                });
+        }
+
+        function cycleRadarZoom() {
+            cycleCount++;
+            let zoomLevel, centerLat, centerLon;
+
+            if (cycleCount <= 2) {
+                zoomLevel = 4;  // USA level
+                centerLat = 39.8283;
+                centerLon = -98.5795;
+            } else if (cycleCount <= 4) {
+                zoomLevel = 6;  // Southeastern US
+                centerLat = 32.7765;
+                centerLon = -89.1656;
+            } else if (cycleCount <= 6) {
+                zoomLevel = 8;  // Mississippi
+                centerLat = 32.3547;
+                centerLon = -89.1656;
+            } else if (cycleCount <= 8) {
+                zoomLevel = 10;  // Central Mississippi
+                centerLat = 32.3198;
+                centerLon = -89.1656;
+            } else {
+                zoomLevel = 12;  // Newton County and surrounding area
+                centerLat = 32.3198;
+                centerLon = -89.1656;
+                cycleCount = 0; // Reset cycle count after last zoom level
+            }
+
+            const radarIframe = document.getElementById('radar-iframe');
+            radarIframe.src = `https://embed.windy.com/embed2.html?lat=${centerLat}&lon=${centerLon}&zoom=${zoomLevel}&overlay=radar&play=true`;
+        }
+
+        updateWeather();
+        setInterval(updateWeather, 300000);
+
+        updateTimeDate();
+        setInterval(updateTimeDate, 1000);
+
+        updateAlerts();
+        setInterval(updateAlerts, 300000);
+
+        setInterval(cycleRadarZoom, 10000); // 10 seconds per cycle, adjust as needed
+    </script>
+</body>
+</html>
