@@ -40,34 +40,35 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 70px;
+            height: 10vh;
             z-index: 10;
-            padding: 0 20px;
+            padding: 0 5vw;
             box-sizing: border-box;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
 
         #logo {
-            height: 50px;
+            height: 8vh;
             width: auto;
             filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.7));
         }
 
         #time-date {
-            font-size: 58px;
+            font-size: 1.8vw;
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
         }
 
         #current-weather {
             position: absolute;
-            top: 70px;
+            top: 10vh;
             right: 0;
-            width: 35.6%;
-            padding: 15px;
+            width: 30%;
+            max-width: 350px;
+            padding: 1vw;
             box-sizing: border-box;
             background: rgba(0, 51, 102, 0.85);
-            z-index: 5;
+            z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -76,14 +77,14 @@
         }
 
         #current-icon {
-            font-size: 92px;
-            margin-right: 20px;
+            font-size: 3.5vw;
+            margin-right: 1.5vw;
             color: #f39c12;
             text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
         }
 
         #current-temp {
-            font-size: 68px;
+            font-size: 2.5vw;
             font-weight: bold;
             margin: 0;
             color: #f39c12;
@@ -91,7 +92,7 @@
         }
 
         #current-condition {
-            font-size: 52px;
+            font-size: 1.5vw;
             margin: 10px 0;
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
@@ -99,10 +100,10 @@
 
         #radar {
             position: absolute;
-            top: 70px;
+            top: 10vh;
             left: 0;
             width: 65%;
-            height: calc(100% - 140px);
+            height: calc(100% - 20vh);
             background: #ffffff;
             border-right: 2px solid #003366;
             border-radius: 0 10px 10px 0;
@@ -118,23 +119,25 @@
 
         #weather-forecast {
             position: absolute;
-            top: calc(210px); /* Adjusted top position */
+            top: calc(10vh + 100px); /* Start below the current day data */
             right: 0;
-			width: 35%;
-            height: calc(100% - 215px); /* Adjusted height */
+            width: 30%;
+            max-width: 350px;
+            height: calc(100% - 10vh - 100px); /* Adjust height to extend to the bottom of the page */
             background-color: rgba(0, 51, 102, 0.85);
-            padding: 5px;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-gap: 2px;
+            padding: 1vw;
             box-sizing: border-box;
-            border-radius: 5px 0 0 5px;
+            border-radius: 0 0 10px 0;
             box-shadow: -4px 0 10px rgba(0, 0, 0, 0.5);
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns */
+            grid-gap: 1vw;
+            overflow-y: hidden; /* Prevent scrolling */
         }
 
         .forecast-day {
             text-align: center;
-            padding: 8px;
+            padding: 0.5vw;
             background-color: rgba(255, 255, 255, 0.15);
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
@@ -147,7 +150,7 @@
         }
 
         .forecast-day h3 {
-            font-size: 32px;
+            font-size: 1.2vw;
             margin: 5px 0;
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
@@ -155,11 +158,11 @@
 
         .forecast-day p {
             margin: 5px 0;
-            font-size: 28px;
+            font-size: 1vw;
         }
 
         .weather-icon {
-            font-size: 500%;
+            font-size: 2.5vw;
             color: #f39c12;
             margin: 5px 0;
             transition: transform 0.3s ease;
@@ -176,7 +179,7 @@
             width: 65%;
             background-color: rgba(0, 51, 102, 0.8);
             color: yellow;
-            font-size: 28px;
+            font-size: 1.5vw;
             white-space: nowrap;
             overflow: hidden;
             box-sizing: border-box;
@@ -197,6 +200,52 @@
         @keyframes scroll-left {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
+        }
+
+        @media (max-width: 768px) {
+            #header {
+                flex-direction: column;
+                height: auto;
+                padding: 10px;
+            }
+
+            #logo {
+                height: 7vh;
+                margin-bottom: 10px;
+            }
+
+            #time-date {
+                font-size: 3.5vw;
+            }
+
+            #current-weather, #radar, #weather-forecast {
+                width: 100%;
+                height: auto;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+
+            #radar {
+                height: 40vh;
+                border-radius: 0;
+            }
+
+            #weather-forecast {
+                top: auto;
+                height: auto;
+                padding: 10px;
+                grid-template-columns: 1fr;
+            }
+
+            .forecast-day {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            #rss-feed {
+                width: 100%;
+                font-size: 3.5vw;
+            }
         }
     </style>
 </head>
@@ -270,7 +319,7 @@
                     const forecastElement = document.getElementById('weather-forecast');
                     forecastElement.innerHTML = '';
 
-                    data.data.slice(1, 7).forEach(day => {
+                    data.data.slice(1, 6).forEach(day => {
                         const weatherCode = day.weather.code;
                         const forecastDay = document.createElement('div');
                         forecastDay.classList.add('forecast-day');
@@ -375,15 +424,15 @@
         }
 
         updateWeather();
-        setInterval(updateWeather, 300000);
+        setInterval(updateWeather, 60000); // 60 seconds per update, adjust as needed
 
         updateTimeDate();
-        setInterval(updateTimeDate, 1000);
+        setInterval(updateTimeDate, 1000); // 1 second per update, adjust as needed
 
         updateAlerts();
-        setInterval(updateAlerts, 300000);
+        setInterval(updateAlerts, 300000); // 5 minutes per update, adjust as needed
 
-        setInterval(cycleRadarZoom, 10000); // 10 seconds per cycle, adjust as needed
+        setInterval(cycleRadarZoom, 20000); // 20 seconds per cycle, adjust as needed
     </script>
 </body>
 </html>
