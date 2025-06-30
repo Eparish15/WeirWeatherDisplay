@@ -1,4 +1,4 @@
-const apiKey = '03eb116222a8e3db56600fcc63a86476';
+const apiKey = ;
 const lat = 32.321; // Newton, MS
 const lon = -89.112;
 
